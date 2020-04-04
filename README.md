@@ -14,7 +14,7 @@ For designs to detect main effects, first three letters stand for the type of as
 For example, the function `mdes.cra2()` can be called to calculate MDES for main treatment effect in a two-level cluster-randomized trial. Similiarly, the function `mdesd.mod222()` can be called to calculate MDESD for moderator effect residing at level 2 in a two-level cluster-randomized trial. Finally, the function `power.med221()` can be called to calculate statistical power for mediator effect residing at level 2 in a two-level cluster-randomized trial. 
 
 
-Live apps at: <br>
+Live app at: <br>
 <https://powerupr.shinyapps.io/index/> 
 
 **Suggested citations**:
