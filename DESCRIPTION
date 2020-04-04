@@ -1,0 +1,23 @@
+Package: PowerUpR
+Type: Package
+Title: Power Analysis Tools for Multilevel Randomized Experiments
+Version: 1.0.5
+Date: 2020-04-09
+Authors@R: c(
+    person("Metin", "Bulus", email = "bulusmetin@gmail.com", role = c("aut", "cre")),
+    person("Nianbo", "Dong", role = "aut"),
+    person("Benjamin", "Kelcey", role = "aut"),
+    person("Jessaca", "Spybrook", role = "aut")
+    )
+Description: 
+ Includes tools to calculate statistical power, minimum detectable effect size (MDES), MDES difference (MDESD), and minimum required sample size for various multilevel randomized experiments with continuous outcomes. Some of the functions can assist with planning two- and three-level cluster-randomized trials (CRTs) sensitive to multilevel moderation and mediation (2-1-1, 2-2-1, and 3-2-1). See 'PowerUp!' Excel series at <https://www.causalevaluation.org/>. 
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+License: GPL (>= 3)
+NeedsCompilation: no
+Author: Metin Bulus [aut, cre],
+  Nianbo Dong [aut],
+  Benjamin Kelcey [aut],
+  Jessaca Spybrook [aut]
+Maintainer: Metin Bulus <bulusmetin@gmail.com>
+
