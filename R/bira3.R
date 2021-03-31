@@ -100,3 +100,5 @@ mrss.bira3r1 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
 # example
 # mrss.bira3r1(rho3=.20, rho2=.15, omega3=.10, omega2=.10, n=12, J=3)
 mrss.bira3 <- mrss.bira3r1
+
+

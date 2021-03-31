@@ -1,6 +1,7 @@
 \name{cra2}
 \alias{cra2}
 \alias{cra2r2}
+\alias{cra2_pn}
 \alias{bcra3f2}
 \alias{mdes.cra2}
 \alias{power.cra2}
@@ -21,6 +22,9 @@
 \alias{mdes.bcra3f2}
 \alias{power.bcra3f2}
 \alias{mrss.bcra3f2}
+\alias{mdes.cra2_pn}
+\alias{power.cra2_pn}
+\alias{mrss.cra2_pn}
 
 \title{Two-level Cluster-randomized Trials to Detect Main, Moderation and Mediation Effects}
 
@@ -34,11 +38,14 @@ For moderator at level 2, use \code{mdes.mod222()} to calculate the minimum dete
 For mediator at level 1 and level 2, use \code{power.med211()} to calculate the statistical power for the 2-1-1 mediation, and \code{power.med221()} for the 2-2-1 mediation.
 
 For cluster-randomized block designs (treatment at level 2, with fixed effects across level 3 blocks), use \code{mdes.bcra3f2()} to calculate the minimum detectable effect size, \code{power.bcra3f2()} to calculate the statistical power, and \code{mrss.bcra3f2()} to calculate the minimum required sample size (number of clusters per block).
+
+For partially nested cluster randomized trials (interventions clusters in treatment groups) use \code{mdes.cra2_pn()} to calculate the minimum detectable effect size, \code{power.cra2_pn()} to calculate the statistical power, and \code{mrss.cra2_pn()} to calculate the minimum required sample size (number of schools).
+
 }
 
 \usage{
 mdes.cra2(power=.80, alpha=.05, two.tailed=TRUE,
-          rho2, p=.50, g2=0, r21=0, r22=0,
+          rel1 = 1, rho2, p=.50, g2=0, r21=0, r22=0,
           n, J)
 
 mdesd.mod221(power=.80, alpha=.05, two.tailed=TRUE,
@@ -50,7 +57,7 @@ mdesd.mod222(power=.80, alpha=.05, two.tailed=TRUE,
             p=.50, q=NULL, n, J)
 
 power.cra2(es=.25, alpha=.05, two.tailed=TRUE,
-           rho2, g2=0, p=.50, r21=0, r22=0,
+           rel1 = 1, rho2, g2=0, p=.50, r21=0, r22=0,
            n, J)
 
 power.mod221(es=.25, alpha=.05, two.tailed=TRUE,
@@ -72,7 +79,7 @@ power.med221(esa, esb, escp, two.tailed = TRUE, alpha = .05,
              p = .50, n, J)
 
 mrss.cra2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
-          n, J0=10, tol=.10,
+          n, J0=10, tol=.10, rel1 = 1,
           rho2, g2=0, p=.50, r21=0, r22=0)
 
 mrss.mod221(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
@@ -98,6 +105,18 @@ power.bcra3f2(es=.25, alpha=.05, two.tailed=TRUE,
 mrss.bcra3f2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
              n, K, J0=10, tol=.10,
              rho2, p=.50, g2=0, r21=0, r22=0)
+
+mdes.cra2_pn(power=.80, alpha=.05, two.tailed=TRUE, df=NULL,
+             rho2_trt=.20, rho_ic=0, p=.50,
+             r21=0, n, J, ic_size=1)
+
+power.cra2_pn(es=.25,alpha=.05, two.tailed=TRUE, df=NULL,
+              rho2_trt=.20, rho_ic=0, p=.50,
+              r21=0, n, J, ic_size=1)
+
+mrss.cra2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
+             z.test=FALSE, rho2_trt=.20, rho_ic=0, p=.50,
+             r21=0, n, ic_size=1, J0=10, tol=.10)
 }
 
 \arguments{
@@ -105,6 +124,10 @@ mrss.bcra3f2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{es, esa, esb, esb1, esB, escp}{effect size for main/moderator effects, or for path coefficients a (treatment - mediator), b (level 2 mediator - outcome), b1 (level 1 mediator - outcome), B (overall mediator - outcome) or cp (direct treatment - outcome) in the mediation model.}
   \item{alpha}{probability of type I error.}
   \item{two.tailed}{logical; \code{FALSE} for one-tailed hypothesis testing.}
+  \item{df}{degrees of freedom.}
+  \item{rho_ic}{proportion of variance in the outcome that is between intervention clusters.}
+  \item{rho2_trt}{proportion of variance in the outcome (for treatment group) that is between level 2 units.}
+  \item{rel1}{level 1 outcome reliability coefficient (Cox \& Kelcey, 2019b).}
   \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2).}
   \item{rhom2}{proportion of variance in the mediator between level 2 units.}
   \item{omegam2}{ratio of the unconditional variance in the moderator effect that is between level 2 units to the residual variance between level 2 units in the null model.}
@@ -112,7 +135,7 @@ mrss.bcra3f2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{q}{proportion of level 1 or level 2 units in the moderator subgroup.}
   \item{g1}{number of covariates at level 1.}
   \item{g2}{number of covariates at level 2.}
-  \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates.}
+  \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates (applies to all levels in partially nested designs).}
   \item{r22}{proportion of level 2 variance in the outcome explained by level 2 covariates.}
   \item{r2m1}{proportion of mediator variance at level 1 explained by level 1 covariates.}
   \item{r2m2}{proportion of variance in the moderator effect that is explained by level 2 predictors. For the mediation model, proportion of variance in the mediator explained by level 2 predictors.}
@@ -188,4 +211,31 @@ power.med211(esa=0.4135, esb1=0.0670, esB=0.3595, escp=.1,
 mdes.bcra3f2(rho2=.10, n=20, J=44, K=5)
 power.bcra3f2(es = .145, rho2=.10, n=20, J=44, K=5)
 mrss.bcra3f2(es = .145, rho2=.10, n=20, K=5)
+
+# cross-checks for partially nested cluster-randomized trial
+mdes.cra2_pn(n=40, J=70, rho2_trt=.15, rho_ic=.10, ic_size=10)
+power.cra2_pn(es=.305, n=40, J=70, rho2_trt=.15, rho_ic=.10, ic_size=10)
+mrss.cra2_pn(es=.305, n=40, rho2_trt=.15, rho_ic=.10, ic_size=10)
+}
+
+\references{
+Cox, K., \& Kelcey, B. (2019a). Optimal sample allocation in group-randomized mediation studies with a group-level mediator. \emph{The Journal of Experimental Education}, \emph{87}(4), 616-640. \url{https://doi.org/10.1080/00220973.2018.1496060}
+
+Cox, K., \& Kelcey, B. (2019b). Optimal design of cluster-and multisite-randomized studies using fallible outcome measures. Evaluation Review, 43(3-4), 189-225. \url{https://doi.org/10.1177%2F0193841X19870878}
+
+Dong, N., Spybrook J., Kelcey, B., \& Bulus, M.  (in press). Power analyses for moderator effects with (non)random slopes in cluster randomized trials. \emph{Methodology}.
+
+Kelcey, B., Dong, N., Spybrook, J., \& Cox, K. (2017). Statistical power for causally defined indirect effects in group-randomized trials with individual-level mediators. \emph{Journal of Educational and Behavioral Statistics}, \emph{42}(5), 499-530. \url{https://doi.org/10.3102%2F1076998617695506}
+
+Kelcey, B., Dong, N., Spybrook, J., \& Shen, Z. (2017). Experimental power for indirect effects in group-randomized studies with group-level mediators. \emph{Multivariate behavioral research}, \emph{52}(6), 699-719. \url{https://doi.org/10.1080/00273171.2017.1356212}
+
+Kelcey, B., \& Shen, Z. (2020). Strategies for efficient experimental design in studies probing 2-1-1 mediation. \emph{The Journal of Experimental Education}, \emph{88}(2), 311-334. \url{https://doi.org/10.1080/00220973.2018.1533796}
+
+Kelcey, B., Spybrook, J., \& Dong, N. (2019). Sample size planning for cluster-randomized interventions probing multilevel mediation. \emph{Prevention Science}, \emph{20}(3), 407-418. \url{https://doi.org/10.1007/s11121-018-0921-6}
+
+Spybrook, J., Kelcey, B., \& Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://doi.org/10.3102%2F1076998616655442}
+
+Dong, N., \& Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
+
+Lohr, S., Schochet, P. Z., \& Sanders, E. (2014). Partially nested randomized controlled trials in education research: A guide to design and analysis. NCER 2014-2000. National Center for Education Research. \url{https://ies.ed.gov/ncer/pubs/20142000/pdf/20142000.pdf}
 }

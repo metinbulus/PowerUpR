@@ -1,5 +1,5 @@
 mdes.cra2r2 <- function(power=.80, alpha=.05, two.tailed=TRUE,
-                        rho2, p=.50, g2=0, r21=0, r22=0,
+                        rel1=1, rho2, p=.50, g2=0, r21=0, r22=0,
                         n, J){
 
   user.parms <- as.list(match.call())
@@ -7,13 +7,13 @@ mdes.cra2r2 <- function(power=.80, alpha=.05, two.tailed=TRUE,
 
   df <- J - g2 - 2
   SSE <- sqrt(rho2*(1-r22)/(p*(1-p)*J) +
-               (1-rho2)*(1-r21)/(p*(1-p)*J*n))
+               (1-rho2)*(1-r21)/(p*(1-p)*J*n*rel1))
 
   mdes <- .mdes.fun(power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed)
   .summ.mdes(effect = "main", power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed, mdes = mdes)
   mdes.out <- list(fun = "mdes.cra2r2",
                    parms = list(power=power, alpha=alpha, two.tailed=two.tailed,
-                                rho2=rho2, g2=g2, r21=r21, r22=r22,
+                                rel1=rel1, rho2=rho2, g2=g2, r21=r21, r22=r22,
                                 p=p, n=n, J=J),
                    df = df,
                    ncp = mdes[1]/SSE,
@@ -100,7 +100,7 @@ mdesd.mod222 <- mdes.mod222 <- function(power=.80, alpha=.05, two.tailed=TRUE,
 # mdes.mod222(alpha = .04, rho2=.20, n=4, J=20, q=.5)
 
 power.cra2r2 <- function(es=.25, alpha=.05, two.tailed=TRUE,
-                         rho2, g2=0, p=.50, r21=0, r22=0,
+                         rel1=1, rho2, g2=0, p=.50, r21=0, r22=0,
                          n, J){
 
   user.parms <- as.list(match.call())
@@ -108,13 +108,13 @@ power.cra2r2 <- function(es=.25, alpha=.05, two.tailed=TRUE,
 
   df <- J - g2 - 2
   SSE <- sqrt(rho2*(1-r22)/(p*(1-p)*J) +
-                    (1-rho2)*(1-r21)/(p*(1-p)*J*n))
+                    (1-rho2)*(1-r21)/(p*(1-p)*J*n*rel1))
 
   power <- .power.fun(es = es, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed)
   .summ.power(power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed, es = es)
   power.out <-  list(fun = "power.cra2r2",
                      parms = list(es=es, alpha=alpha, two.tailed=two.tailed,
-                                  rho2=rho2,
+                                  rel1=rel1, rho2=rho2,
                                   p=p, r21=r21, r22=r22, g2=g2,
                                   n=n, J=J),
                      df = df,
@@ -345,7 +345,7 @@ power.med221 <- function(esa, esb, escp, two.tailed = TRUE, alpha = .05,
 
 mrss.cra2r2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
                         n, J0=10, tol=.10,
-                        rho2, g2=0, p=.50, r21=0, r22=0) {
+                        rel1=1, rho2, g2=0, p=.50, r21=0, r22=0) {
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
@@ -359,7 +359,7 @@ mrss.cra2r2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
     T2 <- abs(qt(power,df))
     M <- ifelse(power>=.5,T1+T2,T1-T2)
     J1 <- (M/es)^2 * (rho2*(1-r22)/(p*(1-p)) +
-                          (1-rho2)*(1-r21)/(p*(1-p)*n))
+                          (1-rho2)*(1-r21)/(p*(1-p)*n*rel1))
     if(abs(J1-J0)<tol){conv <- TRUE}
     J0 <- (J1+J0)/2
     i <- i+1
@@ -369,7 +369,7 @@ mrss.cra2r2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   mrss.out <-  list(fun = "mrss.cra2r2",
                     parms = list(es=es, power=power, alpha=alpha, two.tailed=two.tailed,
                                  n=n, J0=J0, tol=tol,
-                                 rho2=rho2,
+                                 rel1=rel1, rho2=rho2,
                                  p=p, r21=r21, r22=r22, g2=g2),
                     df = df,
                     ncp = M,
@@ -574,3 +574,146 @@ mrss.bcra3f2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
 }
 # example
 # mrss.bcra3f2(rho2=.10, n=10, K=3)
+
+mdes.cra2_pn <- function(power=.80, alpha=.05, two.tailed=TRUE, df=NULL,
+                         rho2_trt=.20, rho_ic=0, p=.50, r21=0, n, J, ic_size=1){
+
+  user.parms <- as.list(match.call())
+  .error.handler(user.parms)
+
+  if(ic_size == 1 & rho_ic != 0) {
+    rho_ic <- 0
+    warning("Forcing 'rho_ic = 0'", call. = FALSE)
+  } else  if(ic_size > 1 & rho_ic == 0) {
+    warning("'rho_ic = 0'?", call. = FALSE)
+  }
+
+  # Satterthwaite (1946) approximation
+  # assuming equal level 1 variance for treatment and control groups
+  if(is.null(df)) {
+    q <- 1 - p
+    it <- n / ic_size
+    xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+    xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+    df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J*q - 1)) + xt^2 / (p^2 *(J*p - 1)))
+  }
+
+  deff_rand_ic <- 1 + (rho2_trt * (n - 1) + rho_ic * (1 - p) * (ic_size - 1)) / (1 - p * rho_ic)
+  SSE <- sqrt(((1 - r21) / (J * n * p * (1 - p))) * ((1 - p * rho_ic) / (1 - rho_ic)) * deff_rand_ic )
+
+  mdes <- .mdes.fun(power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed)
+  .summ.mdes(effect = "main", power = power, alpha = alpha, sse = SSE,
+                        df = round(df,3), two.tailed = two.tailed, mdes = mdes)
+  mdes.out <- list(fun = "mdes.cra2_pn",
+                   parms = list(power=power, alpha=alpha, two.tailed=two.tailed,
+                                rho2_trt=rho2_trt, rho_ic=rho_ic, r21=r21, p=p, n=n, J=J, ic_size=ic_size),
+                   df = df,
+                   ncp = mdes[1]/SSE,
+                   mdes = mdes)
+  class(mdes.out) <- c("main", "mdes")
+  return(invisible(mdes.out))
+}
+# constructed data example 4.1.2 (Lohr, Schochet, Sanders, 2014, p. 76 - 82)
+# mdes.cra2_pn(rho2_trt=.15, rho_ic = .10, n=40, J = 70, ic_size = 10, r21=0, df= Inf)
+# Satterthwaite df is slighlty overestimated (64.2 in Lohr et al., 67.7 below)
+# mdes.cra2_pn(rho2_trt=.15, rho_ic = .10, n=40, J = 70, ic_size = 10, r21=0)
+
+power.cra2_pn <- function(es=.25,alpha=.05, two.tailed=TRUE, df=NULL,
+                          rho2_trt=.20, rho_ic=0, p=.50, r21=0, n, J, ic_size=1){
+
+  user.parms <- as.list(match.call())
+  .error.handler(user.parms)
+
+  if(ic_size == 1 & rho_ic != 0) {
+    rho_ic <- 0
+    warning("Forcing 'rho_ic = 0'", call. = FALSE)
+  } else  if(ic_size > 1 & rho_ic == 0) {
+    warning("'rho_ic = 0'?", call. = FALSE)
+  }
+
+  # Satterthwaite (1946) approximation
+  # assuming equal level 1 variance for treatment and control groups
+  if(is.null(df)) {
+    q <- 1 - p
+    it <- n / ic_size
+    xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+    xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+    df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J*q - 1)) + xt^2 / (p^2 *(J*p - 1)))
+  }
+
+  deff_rand_ic <- 1 + (rho2_trt * (n - 1) + rho_ic * (1 - p) * (ic_size - 1)) / (1 - p * rho_ic)
+  SSE <- sqrt(((1 - r21) / (J * n * p * (1 - p))) * ((1 - p * rho_ic) / (1 - rho_ic)) * deff_rand_ic )
+
+  power <- .power.fun(es = es, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed)
+  .summ.power(power = power, alpha = alpha, sse = SSE, df = round(df,3), two.tailed = two.tailed, es = es)
+  power.out <-  list(fun = "power.cra2_pn",
+                     parms = list(es=es, alpha=alpha, two.tailed=two.tailed,
+                                  rho2_trt=rho2_trt, rho_ic=rho_ic, r21=r21, p=p, n=n, J=J, ic_size=ic_size),
+                     df = df,
+                     ncp = es/SSE,
+                     power = power)
+  class(power.out) <- c("main", "power")
+  return(invisible(power.out))
+}
+# constructed data example 4.1.2 (Lohr, Schochet, Sanders, 2014, p. 76 - 82)
+# power.cra2_pn(es=.30, rho2_trt=.15, rho_ic = .10, n=40, J = 70, ic_size = 10, r21=0, df= Inf)
+
+mrss.cra2_pn  <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE, z.test=FALSE,
+                          rho2_trt=.20, rho_ic=0, p=.50, r21=0, n, ic_size=1, J0=10, tol=.10){
+
+  user.parms <- as.list(match.call())
+  .error.handler(user.parms)
+
+  if(ic_size == 1 & rho_ic != 0) {
+    rho_ic <- 0
+    warning("Forcing 'rho_ic = 0'", call. = FALSE)
+  } else  if(ic_size > 1 & rho_ic == 0) {
+    warning("'rho_ic = 0'?", call. = FALSE)
+  }
+
+  i <- 0
+  conv <- FALSE
+  while(i<=100 & conv==FALSE){
+
+    # Satterthwaite (1946) approximation
+    # assuming equal level 1 variance for treatment and control groups
+    q <- 1 - p
+    it <- n / ic_size
+    xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+    xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+    df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J0*q - 1)) + xt^2 / (p^2 *(J0*p - 1)))
+
+    if(df <= 0) stop("Increase 'J0'", call. = FALSE)
+    if(df <= 0 | is.infinite(df)){break}
+
+    if(z.test) df <- Inf
+
+    T1 <- ifelse(two.tailed==TRUE,abs(qt(alpha/2,df)),abs(qt(alpha,df)))
+    T2 <- abs(qt(power,df))
+    M <- ifelse(power>=.5,T1+T2,T1-T2)
+
+    deff_rand_ic <- 1 + (rho2_trt * (n - 1) + rho_ic * (1 - p) * (ic_size - 1)) / (1 - p * rho_ic)
+    VAR <- ((1 - r21) / (n * p * (1 - p))) * ((1 - p * rho_ic) / (1 - rho_ic)) * deff_rand_ic
+
+    J1 <- (M/es)^2 * VAR
+    if(abs(J1-J0)<tol){conv <- TRUE}
+    J0 <- (J1+J0)/2
+    i <- i+1
+  }
+
+  n <- round(ifelse(df>0,round(n),NA))
+  J <- round(ifelse(df>0,round(J0),NA))
+
+  J.out <-  list(fun = "mrss.cra2_pn",
+                 parms = list(es=es, power=power, alpha=alpha, two.tailed=two.tailed,
+                              rho_ic = rho_ic, r21=r21, p=p, n=n, ic_size=ic_size,
+                              J0=J0, tol=tol),
+                 df=df,
+                 ncp = M,
+                 J = J)
+  class(J.out) <- c("main", "mrss")
+  cat("J =", J, "\n")
+  return(invisible(J.out))
+}
+# constructed data example 4.1.2 (Lohr, Schochet, Sanders, 2014, p. 76 - 82)
+# mrss.cra2_pn(es=.30, rho2_trt=.15, rho_ic = .10, n=40, ic_size = 10, r21=0, z.test = TRUE)

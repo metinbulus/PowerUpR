@@ -335,9 +335,76 @@ power.mod333 <- function(es=.25, alpha=.05, two.tailed=TRUE,
 # power.mod333(es=.30, rho3=.1, rho2=.1, q=.5, g3=1, r21=.3, r22=.4, r23=.5, n=20, J=4, K=60)
 # power.mod333(es=.15, rho3=.1, rho2=.1, g3=1, r21=.3, r22=.4, r23=.5, n=20, J=4, K=60)
 
+power.med331 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
+                         mc = FALSE, nsims = 1000, ndraws = 1000,
+                         rho2, rho3, r2m3 = 0, r21 = 0, r22 = 0, g3 = 0, r23 = 0,
+                         p = .50, n, J, K) {
+
+  user.parms <- as.list(match.call())
+  .error.handler(user.parms)
+
+  dfa <- K - g3 - 1
+  dfB <- K - g3 - 1
+  df <- rbind(dfa, dfB)
+  colnames(df) <- "df"
+  rownames(df) <- c("a", "B")
+
+  sea331 <- .se.a331(r2m3 = r2m3, gm3 = g3, p = p, K = K)
+  seB331 <- .se.B331(rho2 = rho2, rho3 = rho3, r2m3 = r2m3,
+                     r21 = r21, r22 = r22, g3 = g3, r23 = r23,
+                     p = p, n = n, J = J, K = K)
+  ncpa <- esa/sea331
+  ncpB <- esB/seB331
+  ncp <- rbind(ncpa, ncpB)
+  colnames(ncp) <- "ncp"
+  rownames(ncp) <- c("a", "B")
+
+  powera <- .power.fun(es = esa, alpha = alpha, sse = sea331, two.tailed = two.tailed, df = dfa)
+  powerB <- .power.fun(es = esB, alpha = alpha, sse = seB331, two.tailed = two.tailed, df = dfB)
+  power.sobel.aB <- .power.sobel(x = esa, y = esB, sex = sea331, sey = seB331, alpha = alpha, two.tailed = two.tailed)
+  power.joint.aB <- .power.jt(x = esa, y = esB, sex = sea331, sey = seB331, alpha = alpha, dfx = dfa, dfy = dfB, two.tailed = two.tailed)
+  power.mc.aB <- ifelse(mc, .power.mc(nsims = nsims, ndraws = ndraws, x = esa, y = esB, sex = sea331, sey = seB331, alpha = alpha, two.tailed = two.tailed), NA)
+
+  power <- rbind(
+    c(round(powera, 3), NA, NA, NA),
+    c(round(powerB, 3), NA, NA, NA),
+    c(NA, round(power.sobel.aB, 3), round(power.joint.aB, 3), round(power.mc.aB, 3))
+  )
+  colnames(power) <- c("t", "sobel", "joint", "mc")
+  rownames(power) <- c("a", "B", "aB")
+
+  power.out <- list(fun = "power.med331",
+                    parms = list(esa = esa, esB = esB,
+                                 two.tailed = two.tailed, alpha = alpha,
+                                 mc = mc, nsims = nsims, ndraws = ndraws,
+                                 rho2 = rho2, rho3 = rho3, r2m3 = r2m3,
+                                 r21 = r21, r22 = r22, g3 = g3, r23 = r23,
+                                 p = p, n = n, J = J, K = K),
+                    df = df,
+                    ncp = ncp,
+                    power = round(power, 3))
+  cat("Statistical power: \n")
+  cat("------------------------------------ \n")
+  print(power)
+  cat("------------------------------------ \n")
+  cat("Degrees of freedom for path a:", dfa,
+      "\nDegrees of freedom for path B:", dfB,
+      "\nStandardized standard error for path a:", round(sea331, 3),
+      "\nStandardized standard error for path B:", round(seB331, 3),
+      "\nType I error rate:", alpha,
+      "\nTwo-tailed test:", two.tailed, "\n")
+  class(power.out) <- c("power", "med331")
+  return(invisible(power.out))
+}
+# example
+# power.med331(esa= .5, esB = .3, rho2 = .15, rho3 = .15,
+#              r21 = .2, r22 = .2, g3 = 4,
+#              n = 20, J = 4, K = 80, p = .5, mc = TRUE)
+
 power.med321 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
                          mc = FALSE, nsims = 1000, ndraws = 1000,
-                         rhom3, rho2, rho3, r2m2, r2m3, r21, r22, r23,
+                         rhom3, rho2, rho3,
+                         r2m2 = 0, r2m3 = 0 , r21 = 0, r22 = 0, r23 = 0,
                          p = .50, n, J, K) {
 
   user.parms <- as.list(match.call())
@@ -394,14 +461,83 @@ power.med321 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
   class(power.out) <- c("power", "med321")
   return(invisible(power.out))
 }
-# examples
+# example
 # power.med321(esa= .49, esB = .30, rhom3 = 0.26, rho2 = .15, rho3 = .20,
 #              r2m2 = .07, r2m3 = .17, r21 = .02, r22 = .41, r23 = .38,
 #              p = .50, n = 20, J = 4, K = 30)
-#
-# power.med321(esa= .51, esB = .30, rhom3 = 0.27, rho2 = .15, rho3 = .19,
-#              r2m2 = .07, r2m3 = .16, r21 = .02, r22 = .41, r23 = .38,
-#              p = .50, n = 20, J = 4, K = 60)
+
+power.med311 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
+                         mc = FALSE, nsims = 1000, ndraws = 1000,
+                         rhom2, rhom3, rho2, rho3, r2m1 = 0, r2m2 = 0, r2m3 = 0,
+                         r21 = 0, r22 = 0, g3 = 0, r23 = 0,
+                         p = .50, n, J, K) {
+
+  user.parms <- as.list(match.call())
+  .error.handler(user.parms)
+
+  dfa <- K - g3 - 1
+  dfB <- K - g3 - 1
+  df <- rbind(dfa, dfB)
+  colnames(df) <- "df"
+  rownames(df) <- c("a", "B")
+
+  sea311 <- .se.a311(rhom2 = rhom2, rhom3 = rhom3, r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3,
+                     gm3 = g3, p = p, n = n, J = J, K = K)
+  seB311 <- .se.B311(rho2 = rho2, rho3 = rho3, rhom2 = rhom2, rhom3 = rhom3,
+                     r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3, r21 = r21, r22 = r22, g3 = g3, r23 = r23,
+                     p = p, n = n, J = J, K = K)
+  ncpa <- esa/sea311
+  ncpB <- esB/seB311
+  ncp <- rbind(ncpa, ncpB)
+  colnames(ncp) <- "ncp"
+  rownames(ncp) <- c("a", "B")
+
+
+  powera <- .power.fun(es = esa, alpha = alpha, sse = sea311, two.tailed = two.tailed, df = dfa)
+  powerB <- .power.fun(es = esB, alpha = alpha, sse = seB311, two.tailed = two.tailed, df = dfB)
+  power.sobel.aB <- .power.sobel(x = esa, y = esB, sex = sea311, sey = seB311, alpha = alpha, two.tailed = two.tailed)
+  power.joint.aB <- .power.jt(x = esa, y = esB, sex = sea311, sey = seB311, alpha = alpha, dfx = dfa, dfy = dfB, two.tailed = two.tailed)
+  power.mc.aB <- ifelse(mc, .power.mc(nsims = nsims, ndraws = ndraws, x = esa, y = esB, sex = sea311, sey = seB311, alpha = alpha, two.tailed = two.tailed), NA)
+
+  power <- rbind(
+    c(round(powera, 3), NA, NA, NA),
+    c(round(powerB, 3), NA, NA, NA),
+    c(NA, round(power.sobel.aB, 3), round(power.joint.aB, 3), round(power.mc.aB, 3))
+  )
+  colnames(power) <- c("t", "sobel", "joint", "mc")
+  rownames(power) <- c("a", "B", "aB")
+
+  power.out <- list(fun = "power.med321",
+                    parms = list(esa = esa, esB = esB,
+                                 two.tailed = two.tailed, alpha = alpha,
+                                 mc = mc, nsims = nsims, ndraws = ndraws,
+                                 rhom2 = rhom2, rhom3 = rhom3, rho2 = rho2, rho3 = rho3,
+                                 r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3,
+                                 r21 = r21, r22 = r22, r23 = r23,
+                                 p = p, n = n, J = J, K = K),
+                    df = df,
+                    ncp = ncp,
+                    power = round(power, 3))
+  cat("Statistical power: \n")
+  cat("------------------------------------ \n")
+  print(power)
+  cat("------------------------------------ \n")
+  cat("Degrees of freedom for path a:", dfa,
+      "\nDegrees of freedom for path B:", dfB,
+      "\nStandardized standard error for path a:", round(sea311, 3),
+      "\nStandardized standard error for path B:", round(seB311, 3),
+      "\nType I error rate:", alpha,
+      "\nTwo-tailed test:", two.tailed, "\n")
+  class(power.out) <- c("power", "med311")
+  return(invisible(power.out))
+}
+
+# example
+# power.med311(esa= .49 , esB = .30, two.tailed = TRUE, alpha = .05,
+#              mc = TRUE, nsims = 1000, ndraws = 1000,
+#              rhom2 = .05, rhom3 = .26, rho2 = .15, rho3 = .20,
+#              r2m1 = .10, r2m2 = .07, r2m3 = .17, r21 = .02, r22 = .41, r23 = .38,
+#              p = .50, n = 20, J = 4, K = 30)
 
 mrss.cra3r3 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
                         n, J, K0=10, tol=.10,

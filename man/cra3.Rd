@@ -19,7 +19,9 @@
 \alias{power.mod331}
 \alias{power.mod332}
 \alias{power.mod333}
+\alias{power.med331}
 \alias{power.med321}
+\alias{power.med311}
 \alias{mrss.cra3r3}
 \alias{mrss.mod331}
 \alias{mrss.mod332}
@@ -39,7 +41,7 @@ For moderator at level 2, use \code{mdes.mod332()} to calculate the minimum dete
 
 For moderator at level 3, use \code{mdes.mod333()} to calculate the minimum detectable effect size, \code{power.mod333()} to calculate the statistical power, \code{mrss.mod333()} to calculate the minimum required sample size (number of clusters).
 
-For mediator at level 2, use \code{power.med321()} to calculate the statistical power for the 3-2-1 mediation.
+For mediator at level 3, use \code{power.med331()}, for mediator at level 2, use \code{power.med321()}, for mediator at level 1, use \code{power.med311()} to calculate the statistical power.
 
 For cluster-randomized block designs (treatment at level 3, with fixed effects across level 4 blocks), use \code{mdes.bcra4f3()} to calculate the minimum detectable effect size, \code{power.bcra4f3()} to calculate the statistical power, and \code{mrss.bcra4f3()} to calculate the minimum required sample size (number of clusters per block).
 }
@@ -79,10 +81,23 @@ power.mod333(es=.25, alpha=.05, two.tailed=TRUE,
              rho2, rho3, g3=0, r21=0, r22=0, r23=0,
              p=.50, q=NULL, n, J, K)
 
+power.med331(esa, esB, two.tailed = TRUE, alpha = .05,
+             mc = FALSE, nsims = 1000, ndraws = 1000,
+             rho2, rho3, r2m3 = 0, r21 = 0, r22 = 0,
+             g3 = 0, r23 = 0, p = .50, n, J, K
+
 power.med321(esa, esB, two.tailed=TRUE, alpha=.05,
              mc=FALSE, nsims=1000, ndraws=1000,
-             rhom3, rho2, rho3, r2m2, r2m3, r21, r22, r23,
+             rhom3, rho2, rho3, r2m2 = 0,
+             r2m3 = 0, r21 = 0, r22 = 0, r23 = 0,
              p=.50, n, J, K)
+
+power.med311(esa, esB, two.tailed = TRUE, alpha = .05,
+             mc = FALSE, nsims = 1000, ndraws = 1000,
+             rhom2, rhom3, rho2, rho3,
+             r2m1 = 0, r2m2 = 0, r2m3 = 0,
+             r21 = 0, r22 = 0, g3 = 0, r23 = 0,
+             p = .50, n, J, K)
 
 mrss.cra3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
           n, J, K0=10, tol=.10,
@@ -121,6 +136,7 @@ mrss.bcra4f3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{two.tailed}{logical; \code{TRUE} for two-tailed hypothesis testing, \code{FALSE} for one-tailed hypothesis testing. }
   \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2).}
   \item{rho3}{proportion of variance in the outcome between level 3 units (unconditional ICC3).}
+  \item{rhom2}{proportion of variance in the mediator between level 2 units.}
   \item{rhom3}{proportion of variance in the mediator between level 3 units.}
   \item{omegam2}{ratio of the unconditional variance in the moderator effect that is between level 2 units to the residual variance between level 2 units in the null model.}
   \item{omegam3}{ratio of the unconditional variance in the moderator effect that is between level 3 units to the residual variance between level 3 units in the null model.}
@@ -205,10 +221,22 @@ mrss.mod331(es=.1893, alpha=.05, two.tailed=TRUE,
             rho2=.17, rho3=.06, omegam2=0, omegam3=0,
             q=.50, n=15, J=3)
 
+# 3-3-1 mediation
+power.med331(esa= .50, esB = .30, rho2 = .15, rho3 = .15,
+             r21 = .20, r22 = .20, g3 = 4,
+             n = 20, J = 4, K = 80, p = .5)
+
 # 3-2-1 mediation
 power.med321(esa= .51, esB = .30, rhom3 = 0.27, rho2 = .15, rho3 = .19,
              r2m2 = .07, r2m3 = .16, r21 = .02, r22 = .41, r23 = .38,
              p = .50, n = 20, J = 4, K = 60)
+
+# 3-1-1 mediation
+power.med311(esa= .49 , esB = .30,
+             rhom2 = .05, rhom3 = .26, rho2 = .15, rho3 = .20,
+             r2m1 = .10, r2m2 = .07, r2m3 = .17,
+             r21 = .02, r22 = .41, r23 = .38,
+             p = .50, n = 20, J = 4, K = 30)
 
 # cross-checks for cluster-randomized block design
 # treatment at level 3, with fixed effects across level 4 blocks
@@ -219,3 +247,16 @@ power.bcra4f3(es=0.137, rho3=.15, rho2=.15,
 mrss.bcra4f3(es=0.137, rho3=.15, rho2=.15,
              n=10, J=4, L=15)
 }
+
+\references{
+Spybrook, J., Kelcey, B., & Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://doi.org/10.3102%2F1076998616655442}
+
+Dong, N., Kelcey, B., & Spybrook, J. (2018). Power analyses for moderator effects in three-level cluster randomized trials. \emph{The Journal of Experimental Education}, \emph{86}(3), 489-514. \url{https://doi.org/10.1080/00220973.2017.1315714}
+
+Dong, N., & Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
+
+Kelcey, B., Xie, Y., Spybrook, J., \& Dong, N. (2020). Power and Sample Size Determination for Multilevel Mediation in Three-Level Cluster-Randomized Trials. \emph{Multivariate Behavioral Research}, 1-18. \url{https://doi.org/10.1080/00273171.2020.1738910}
+
+Kelcey, B., Spybrook, J., Dong, N., & Bai, F. (2020). Cross-Level Mediation in School-Randomized Studies of Teacher Development: Experimental Design and Power.  \emph{Journal of Research on Educational Effectiveness}, 1-29.\url{https://doi.org/10.1080/19345747.2020.1726540}
+}
+

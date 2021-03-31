@@ -1,7 +1,7 @@
 # define object conversion functions
 mrss.to.mdes <- function(object) {
 
-  if(any(c("med211", "med221") %in% class(object))) {
+  if(any(c("med211", "med221", "med331", "med321", "med311") %in% class(object))) {
     stop("Indirect effects are currently not supported in object conversion functions", call. = FALSE)
   }
 
@@ -34,7 +34,7 @@ mrss.to.mdes <- function(object) {
 
 mrss.to.power <- function(object) {
 
-  if(any(c("med211", "med221") %in% class(object))) {
+  if(any(c("med211", "med221", "med331", "med321", "med311") %in% class(object))) {
     stop("Indirect effects are currently not supported in object conversion functions", call. = FALSE)
   }
 
@@ -66,7 +66,7 @@ mrss.to.power <- function(object) {
 
 power.to.mdes <- function(object) {
 
-  if(any(c("med211", "med221") %in% class(object))) {
+  if(any(c("med211", "med221", "med331", "med321", "med311") %in% class(object))) {
     stop("Indirect effects are currently not supported in object conversion functions", call. = FALSE)
   }
 
@@ -90,7 +90,7 @@ power.to.mdes <- function(object) {
 
 mdes.to.power <- function(object){
 
-  if(any(c("med211", "med221") %in% class(object))) {
+  if(any(c("med211", "med221", "med331", "med321", "med311") %in% class(object))) {
     stop("Indirect effects are currently not supported in object conversion functions", call. = FALSE)
   }
 
@@ -114,7 +114,7 @@ mdes.to.power <- function(object){
 
 mdes.to.pctl <- function(object){
 
-  if(any(c("med211", "med221") %in% class(object))) {
+  if(any(c("med211", "med221", "med331", "med321", "med311") %in% class(object))) {
     stop("Indirect effects are currently not supported in object conversion functions", call. = FALSE)
   }
 

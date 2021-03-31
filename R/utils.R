@@ -59,7 +59,7 @@
   if(is.nan(var.a221) | var.a221 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.a221))
+  return(invisible(sqrt(var.a221)))
 }
 
 .se.b221 <- function(esa, esb, escp, rho2, r22, r21, r2m2, p, n, J) {
@@ -79,7 +79,7 @@
   if(is.nan(var.a211) | var.a211 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.a211))
+  return(invisible(sqrt(var.a211)))
 }
 
 .se.b1211 <- function(esb1, rho2, rhom2, r21, r2m1, n, J) {
@@ -89,7 +89,7 @@
   if(is.nan(var.b1211) | var.b1211 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.b1211))
+  return(invisible(sqrt(var.b1211)))
 }
 
 .se.B211 <- function(esa, esB, esb1, escp, rho2, rhom2, r22, r21, r2m2, r2m1, n, J, p) {
@@ -103,7 +103,29 @@
   if(is.nan(var.B211) | var.B211 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.B211))
+  return(invisible(sqrt(var.B211)))
+}
+
+# standard errors for 3-3-1 mediation
+.se.a331 <- function(r2m3, gm3, p, K) {
+  sig2m <- 1
+  var.a331 <- sig2m * (1 - r2m3) /
+    (p * (1 - p) * (K - gm3 - 1))
+  if(is.nan(var.a331) | var.a331 <= 0) {
+    stop("Design is not feasible", call. = FALSE)
+  }
+  return(invisible(sqrt(var.a331)))
+}
+
+.se.B331 <- function(rho2, rho3, r2m3, r21, r22, g3, r23, n, J, K) {
+  sig2m <- 1
+  var.B331 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
+    ((K - g3 - 1) * sig2m * (1 - r2m3))
+
+  if(is.nan(var.B331) | var.B331 <= 0) {
+    stop("Design is not feasible", call. = FALSE)
+  }
+  return(invisible(sqrt(var.B331)))
 }
 
 # standard errors for 3-2-1 mediation
@@ -113,16 +135,37 @@
   if(is.nan(var.a321) | var.a321 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.a321))
+  return(invisible(sqrt(var.a321)))
 }
 
-.se.B321 <- function(rhom3, rho2, rho3, r2m2, r2m3, r21, r22, r23, p, n, J, K) {
+.se.B321 <- function(rhom3, rho2, rho3, r2m2, r2m3, r21, r22, r23, n, J, K) {
   var.B321 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
     ((K - 6) * (rhom3 * (1 - r2m3) + (1 - rhom3) * (1 - r2m2) / J))
   if(is.nan(var.B321) | var.B321 <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.B321))
+  return(invisible(sqrt(var.B321)))
+}
+
+# standard errors for 3-1-1 mediation
+.se.a311 <- function(rhom2, rhom3, r2m1, gm3, r2m2, r2m3, p, n, J, K) { # r2m3z,
+  var.a311 <- (rhom3 * (1 - r2m3) + rhom2 * (1 - r2m2) / J + (1 - rhom3 - rhom2) * (1 - r2m1) / (n*J)) /
+    (p * (1 - p) * (K - gm3 - 1))
+  if(is.nan(var.a311) | var.a311 <= 0) {
+    stop("Design is not feasible", call. = FALSE)
+  }
+  return(invisible(sqrt(var.a311)))
+}
+
+.se.B311 <- function(rho2, rho3, rhom2, rhom3,
+                     r2m1, r2m2, r2m3, r21, r22, g3, r23,
+                     n, J, K) {
+  var.B311 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
+    ((K - g3 - 1) * (rhom3 * (1 - r2m3) + rhom2 * (1 - r2m2) / J + (1 - rhom3 - rhom2) * (1 - r2m3) / (n*J)))
+  if(is.nan(var.B311) | var.B311 <= 0) {
+    stop("Design is not feasible", call. = FALSE)
+  }
+  return(invisible(sqrt(var.B311)))
 }
 
 # sobel standard error
@@ -131,32 +174,40 @@
   if(is.nan(var.sobel) | var.sobel <= 0) {
     stop("Design is not feasible", call. = FALSE)
   }
-  return(sqrt(var.sobel))
+  return(invisible(sqrt(var.sobel)))
 }
 
 # power functions for indirect effects
 .power.sobel <- function(x, y, sex, sey, alpha, two.tailed, df = 1e+8) {
   sesobel <- .se.sobel(x = x, y = y, sex = sex, sey = sey)
-  capture.output({
-    power <- .power.fun(es = x*y, alpha = alpha, sse = sesobel, two.tailed = two.tailed, df = df)
-  })
-  return(power)
+  power <- .power.fun(es = x*y, alpha = alpha, sse = sesobel, two.tailed = two.tailed, df = df)
+  return(invisible(power))
 }
 
-.power.jt <- function(x, y, sex, sey, alpha, two.tailed, dfx, dfy) {
-  capture.output({
-    powerx <- .power.fun(es = x, alpha = alpha, sse = sex, two.tailed = two.tailed, df = dfx)
-    powery <- .power.fun(es = y, alpha = alpha, sse = sey, two.tailed = two.tailed, df = dfy)
-  })
-  return(powerx*powery)
+.power.jt <- function(x, y, z = NULL, sex, sey, sez = NULL, alpha, two.tailed, dfx, dfy, dfz = NULL) {
+  powerx <- .power.fun(es = x, alpha = alpha, sse = sex, two.tailed = two.tailed, df = dfx)
+  powery <- .power.fun(es = y, alpha = alpha, sse = sey, two.tailed = two.tailed, df = dfy)
+  power.jt <- powerx*powery
+  if(!is.null(z) & !is.null(sez) & !is.null(dfz)) {
+    powerz <- .power.fun(es = z, alpha = alpha, sse = sez, two.tailed = two.tailed, df = dfz)
+    power.jt <- powerx*powery*powerz
+  }
+  return(invisible(power.jt))
 }
 
-.power.mc <- function(nsims, ndraws, x, y, sex, sey, alpha, two.tailed) {
+.power.mc <- function(nsims, ndraws, x, y, z = NULL, sex, sey, sez = NULL, alpha, two.tailed) {
   rejmc <- NULL
   for (i in 1:nsims){
     xstar <- rnorm(1, x, sex)
     ystar <- rnorm(1, y, sey)
     rejmc <- c(rejmc, quantile(rnorm(ndraws, xstar, sex)*rnorm(ndraws, ystar, sey), probs = ifelse(two.tailed, alpha/2, alpha), na.rm = TRUE) > 0)
+
+    if(!is.null(z) & !is.null(sez)) {
+      zstar <- rnorm(1, z, sez)
+      rejmc <- c(rejmc, quantile(rnorm(ndraws, xstar, sex)*rnorm(ndraws, ystar, sey)*rnorm(ndraws, zstar, sez),
+                                 probs = ifelse(two.tailed, alpha/2, alpha), na.rm = TRUE) > 0)
+    }
+
   }
   return(mean(rejmc))
 }

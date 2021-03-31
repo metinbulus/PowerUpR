@@ -1,0 +1,104 @@
+---
+title: "Vectorization Over Arbitrary Design Parameters"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{vectorization over arbitrary design parameters}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(PowerUpR)
+```
+
+To install and load `PowerUpR`:
+```{r,  message=FALSE, eval=FALSE}
+install.packages("PowerUpR")
+library(PowerUpR)
+```
+
+`PowerUpR` functions are not vectorized to avoid possible complications. However, researchers often explore variety of design charactersitics when they determine their sample size. Creating custom plots and tables may assist with their decision. In what follows, example code snippets are provided to demonstrate vectorization of `PowerUpR` functions over single or multiple design parameters.  
+
+NOTE: We would like to thank Dr. Andi Fugard for inspiring this vignette. Dr. Fugard realized that `PowerUpR` functions does not evaluate arguments when they are embedded within a user-specificed function. They recommended using globally defined arguments within the user-specified function. This vignette provides example vectorization of `PowerUpR` functions for creating plots and tables. 
+
+- Plotting MDES (`mdes`) against level-3 intra-class correlation coefficient (`rho3`)
+
+```{r, message=FALSE, fig.width=7, fig.height=5, results = FALSE}
+custom_fun <- function(x) {
+  parms <- list(rho3 = x,
+                power = .80, rho2 = .06,
+                g3 = 1, r21 = .55, r22 = .50, r23 = .45,
+                p = .40, n = 10, J = 2, K = 83)
+  design <- do.call("mdes.cra3", parms)
+  design$mdes[1]
+}
+
+x = seq(.10,.90,.01)
+mdes <- mapply(custom_fun, x)
+plot(x, mdes, type = "l", xlab = "rho3",)
+
+```
+
+- Plotting power (`power`) against explanatory power of level-3 covarites (`r23`)
+```{r, message=FALSE, fig.width=7, fig.height=5, results = FALSE}
+custom_fun <- function(x) {
+  parms <- list(r23 = x,
+                es = .23, rho2 = .06, rho3 = .18,
+                g3 = 1, r21 = .55, r22 = .50,
+                p = .40, n = 10, J = 2, K = 83)
+  design <- do.call("power.cra3", parms)
+  design$power
+}
+
+x = seq(.10,.90,.01)
+power <- mapply(custom_fun, x)
+plot(x, power, type = "l", xlab = "r23")
+```
+
+
+- Table of required sample size (`K`) for various effect size (`es`) values
+```{r, message=FALSE, fig.width=7, fig.height=5, results=FALSE}
+custom_fun <- function(x) {
+  parms <- list(es = x, power = .80, rho2 = .06, rho3 = .18,
+                g3 = 1, r21 = .55, r22 = .50, r23 = .45,
+                p = .40, n = 10, J = 2)
+  design <- do.call("mrss.cra3", parms)
+  design$K
+}
+
+x = c(.15,.20,.25,.30)
+K <- mapply(custom_fun, x)
+table <- data.frame(es = x, K = K)
+```
+```{r, message=FALSE}
+print(table)
+```
+
+
+- Table of required sample size (`K`) for various effect size (`es`) and R-squared values (`r23`) values
+
+```{r, message=FALSE, fig.width=7, fig.height=5, results=FALSE}
+custom_fun <- function(x1,x2) {
+  parms <- list(es = x1, r23 = x2,
+                power = .80, rho2 = .06, rho3 = .18,
+                g3 = 1, r21 = .55, r22 = .50,
+                p = .40, n = 10, J = 2)
+  design <- do.call("mrss.cra3", parms)
+  design$K
+}
+
+vec.custom_fun <- Vectorize(custom_fun, c("x1", "x2"))
+
+x1 = c(.15,.20,.25,.30)
+x2 = c(.40,.50,.60,.70)
+  
+table.K <- outer(x1, x2, vec.custom_fun)
+rownames(table.K) <- paste0("es=",x1)
+colnames(table.K) <- paste0("r23=",x2)
+```
+```{r}
+print(table.K)
+```
+--o--

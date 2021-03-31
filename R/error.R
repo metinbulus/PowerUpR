@@ -3,12 +3,15 @@
   names.x <- names(x)
   if(any(!names.x %in% c("", "n", "J", "K", "L", "n0", "J0", "K0", "L0", "g1", "g2", "g3", "g4",
                          "r21","r22","r23","r24", "r2t2", "r2t3", "r2t4",
-                         "rho2", "rho3", "rho4", "rhom2", "rhom3",
-                         "omega2", "omega3", "omega4", "omegam2", "omegam3", "r2m1", "r2m2", "r2m3",
+                         "rel1", "rho2", "rho3", "rho4", "rhom2", "rhom3",
+                         "omega2", "omega3", "omega4", "omegam2", "omegam3",
+                         "omega2tm", "omega2t", "r2m1", "r2m2", "r2m3",
                          "q", "p", "alpha", "power", "mdes", "es", "escp", "esa", "esb", "esb1", "esB",
                          "esab", "esab1", "esaB", "esa0", "esb0", "esb10", "esB0", "powera", "powerb",
                          "powerb1", "powerB", "maxiter", "abstol", "tol", "two.tailed",
-                         "mc", "nsims", "ndraws", "rhoab", "rhoab1", "rhoab2", "rhob1b2"))) {
+                         "mc", "nsims", "ndraws",
+                         # partially nested designs
+                         "rho_ic", "rho2_trt", "rho3_trt", "ic_size", "ratio_tc_var", "z.test", "df"))) {
     stop("Unused arguments", call. = FALSE)
   }
 
@@ -19,17 +22,18 @@
   names.x <- names(parms.notnull)
   x <- lapply(parms.notnull, eval)
 
-
   # validity check for sample sizes
-  idx.n <- intersect(c("n","J","K","L"),  names.x)
-  length.list.n <- length(unlist(x[idx.n]))
-  length.unlist.n <- length(x[idx.n])
+  idx.n <- intersect(c("n","J","K","L","df","ic_size"),  names.x)
+  length.unlist.n <- length(unlist(x[idx.n]))
+  length.list.n <- length(x[idx.n])
   if(length.list.n == length.unlist.n){
     if(any(x[idx.n] <= 0) ||
        any(lapply(x[idx.n], function(x)!is.numeric(x)) == TRUE) ||
        any(lapply(x[idx.n], length) > 1)) {
       stop("Incorrect sample size", call.=FALSE)
     }
+  } else {
+    stop("Incorrect sample size", call.=FALSE)
   }
 
   # validity check for number of covariates
@@ -44,10 +48,12 @@
 
   # validity check for variance parameters, proportions, and probabilities
   idx.var <- intersect(c("r21","r22","r23","r24", "r2t2", "r2t3", "r2t4",
-                         "r2m1", "r2m2", "r2m3","rhom2", "rhom3", "omegam2", "omegam3",
-                         "rho2", "rho3", "rho4", "omega2", "omega3", "omega4",
+                         "r2m1", "r2m2", "r2m3","rhom2", "rhom3",
+                         "omega2tm", "omega2t", "omegam2", "omegam3",
+                         "rel1", "rho2", "rho3", "rho4", "omega2", "omega3", "omega4",
                          "q", "q", "p", "p", "alpha", "power", "powera",
-                         "powerb", "powerb1", "powerB"),  names.x)
+                         "powerb", "powerb1", "powerB",
+                         "rho_ic", "rho2_trt", "rho3_trt"),  names.x)
   if(any(lapply(x[idx.var], function(x)!is.numeric(x)) == TRUE) ||
      any(lapply(x[idx.var], length) > 1) ||
      any(x[idx.var] < 0) ||
@@ -99,6 +105,13 @@
     }
   }
 
+    # validty check for z-test
+  if("z.test" %in% names.x){
+    if(!is.logical(x$z.test) | length(x$z.test) > 1 ){
+      stop("Non-logical value for argument 'z.test'", call.=FALSE)
+    }
+  }
+
   # validty check for maxiter
   if("maxiter" %in% names.x){
     if(length(x$maxiter) > 1 ||
@@ -106,6 +119,16 @@
        x$maxiter < 10 ||
        x$maxiter > 5000){
       stop("Incorrect value for argument 'maxiter'", call.=FALSE)
+    }
+  }
+
+  # validty check for ratio_tc_var
+  if("ratio_tc_var" %in% names.x){
+    if(length(x$ratio_tc_var) > 1 ||
+       !is.numeric(x$ratio_tc_var) ||
+       x$ratio_tc_var < .50 ||
+       x$ratio_tc_var > 5){
+      stop("Incorrect value for argument 'ratio_tc_var'", call.=FALSE)
     }
   }
 
