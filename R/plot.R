@@ -5,6 +5,10 @@ plot.mrss <- plot.power <- plot.mdes <- function(x, ypar = "mdes", xpar = NULL,
                                     main = NULL, sub = NULL,
                                     locate = FALSE, ...){
 
+  if(any(c("med331", "med311", "med_pn21", "med_pn31", "med_pn32") %in% class(x))) {
+    stop("Design not supported. See 'Vectorization of Functions to Create Plots and Tables'", call. = FALSE)
+  }
+  
   if(any(c("med211", "med221", "med321") %in% class(x))) {
 
     .plot.med(x, ypar = "power", xpar = xpar,
