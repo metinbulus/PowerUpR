@@ -4,6 +4,7 @@
 \alias{q.test}
 \alias{power.rep}
 \alias{mdh.rep}
+\alias{mrns.rep}
 \alias{replication}
 \title{Unambiguous Test of Replication for Ensemble of Studies}
 

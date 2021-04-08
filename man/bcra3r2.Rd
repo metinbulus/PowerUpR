@@ -58,11 +58,13 @@ mrss.bcra3r2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE, z.test=FALSE,
    \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates (applies to all levels in partially nested designs).}
   \item{r22}{proportion of level 2 variance in the outcome explained by level 2 covariates.}
   \item{r2t3}{proportion of treatment effect variance among level 3 units explained by level 3 covariates.}
+  \item{ic_size}{sample size for each intervention cluster.}
   \item{n}{harmonic mean of level 1 units across level 2 units (or simple average).}
   \item{J}{harmonic mean of level 2 units across level 3 units (or simple average).}
   \item{K}{number of level 3 units.}
   \item{K0}{starting value for \code{K}.}
   \item{tol}{tolerance to end iterative process for finding \code{K}.}
+  \item{z.test}{logical; \code{TRUE} for z-test.}
 }
 
 \value{

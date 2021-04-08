@@ -337,22 +337,45 @@ power.mod333 <- function(es=.25, alpha=.05, two.tailed=TRUE,
 
 power.med331 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
                          mc = FALSE, nsims = 1000, ndraws = 1000,
-                         rho2, rho3, r2m3 = 0, r21 = 0, r22 = 0, g3 = 0, r23 = 0,
+                         rho2, rho3, gm3 = 0, r2m3 = 0, r21 = 0, r22 = 0,
+                         g3 = 0, r23 = 0,
                          p = .50, n, J, K) {
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
 
-  dfa <- K - g3 - 1
+  # standard errors for 3-3-1 mediation
+  .se.a331 <- function(r2m3, gm3, p, K) {
+    sig2m <- 1
+    var.a331 <- sig2m * (1 - r2m3) /
+      (p * (1 - p) * (K - gm3 - 1))
+    if(is.nan(var.a331) | var.a331 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.a331)))
+  }
+
+  .se.B331 <- function(rho2, rho3, r2m3, r21, r22, g3, r23, n, J, K) {
+    sig2m <- 1
+    var.B331 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
+      ((K - g3 - 1) * sig2m * (1 - r2m3))
+
+    if(is.nan(var.B331) | var.B331 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.B331)))
+  }
+
+  dfa <- K - gm3 - 1
   dfB <- K - g3 - 1
   df <- rbind(dfa, dfB)
   colnames(df) <- "df"
   rownames(df) <- c("a", "B")
 
-  sea331 <- .se.a331(r2m3 = r2m3, gm3 = g3, p = p, K = K)
+  sea331 <- .se.a331(r2m3 = r2m3, gm3 = gm3, p = p, K = K)
   seB331 <- .se.B331(rho2 = rho2, rho3 = rho3, r2m3 = r2m3,
                      r21 = r21, r22 = r22, g3 = g3, r23 = r23,
-                     p = p, n = n, J = J, K = K)
+                     n = n, J = J, K = K)
   ncpa <- esa/sea331
   ncpB <- esB/seB331
   ncp <- rbind(ncpa, ncpB)
@@ -404,11 +427,31 @@ power.med331 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
 power.med321 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
                          mc = FALSE, nsims = 1000, ndraws = 1000,
                          rhom3, rho2, rho3,
-                         r2m2 = 0, r2m3 = 0 , r21 = 0, r22 = 0, r23 = 0,
+                         r2m2 = 0, r2m3 = 0, r21 = 0, r22 = 0, r23 = 0,
                          p = .50, n, J, K) {
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
+
+  # standard errors for 3-2-1 mediation
+  .se.a321 <- function(rhom3, r2m2, r2m3, p, J, K) {
+    var.a321 <- (rhom3 * (1 - r2m3) + (1 - rhom3) * (1 - r2m2) / J) /
+      (p * (1 - p) * (K - 5))
+    if(is.nan(var.a321) | var.a321 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.a321)))
+  }
+
+  .se.B321 <- function(rhom3, rho2, rho3, r2m2, r2m3, r21, r22, r23, n, J, K) {
+    var.B321 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
+      ((K - 6) * (rhom3 * (1 - r2m3) + (1 - rhom3) * (1 - r2m2) / J))
+    if(is.nan(var.B321) | var.B321 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.B321)))
+  }
+
 
   dfa <- K - 5
   dfB <- K - 6
@@ -418,7 +461,7 @@ power.med321 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
 
   sea321 <- .se.a321(rhom3 = rhom3, r2m2 = r2m2, r2m3 = r2m3, p = p, J = J, K = K)
   seB321 <- .se.B321(rhom3 = rhom3, rho2 = rho2, rho3 = rho3, r2m2 = r2m2, r2m3 = r2m3,
-                     r21 = r21, r22 = r22, r23 = r23, p = p, n = n, J = J, K = K)
+                     r21 = r21, r22 = r22, r23 = r23, n = n, J = J, K = K)
   ncpa <- esa/sea321
   ncpB <- esB/seB321
   ncp <- rbind(ncpa, ncpB)
@@ -468,12 +511,34 @@ power.med321 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
 
 power.med311 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
                          mc = FALSE, nsims = 1000, ndraws = 1000,
-                         rhom2, rhom3, rho2, rho3, r2m1 = 0, r2m2 = 0, r2m3 = 0,
+                         rhom2, rhom3, rho2, rho3,
+                         r2m1 = 0, r2m2 = 0, gm3 = 0, r2m3 = 0,
                          r21 = 0, r22 = 0, g3 = 0, r23 = 0,
                          p = .50, n, J, K) {
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
+
+  # standard errors for 3-1-1 mediation
+  .se.a311 <- function(rhom2, rhom3, r2m1, gm3, r2m2, r2m3, p, n, J, K) { # r2m3z,
+    var.a311 <- (rhom3 * (1 - r2m3) + rhom2 * (1 - r2m2) / J + (1 - rhom3 - rhom2) * (1 - r2m1) / (n*J)) /
+      (p * (1 - p) * (K - gm3 - 1))
+    if(is.nan(var.a311) | var.a311 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.a311)))
+  }
+
+  .se.B311 <- function(rho2, rho3, rhom2, rhom3,
+                       r2m1, r2m2, r2m3, r21, r22, g3, r23,
+                       n, J, K) {
+    var.B311 <- (rho3 * (1 - r23) + rho2 * (1 - r22) / J + (1 - rho3 - rho2) * (1 - r21) / (n * J)) /
+      ((K - g3 - 1) * (rhom3 * (1 - r2m3) + rhom2 * (1 - r2m2) / J + (1 - rhom3 - rhom2) * (1 - r2m3) / (n*J)))
+    if(is.nan(var.B311) | var.B311 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.B311)))
+  }
 
   dfa <- K - g3 - 1
   dfB <- K - g3 - 1
@@ -482,10 +547,10 @@ power.med311 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
   rownames(df) <- c("a", "B")
 
   sea311 <- .se.a311(rhom2 = rhom2, rhom3 = rhom3, r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3,
-                     gm3 = g3, p = p, n = n, J = J, K = K)
+                     gm3 = gm3, p = p, n = n, J = J, K = K)
   seB311 <- .se.B311(rho2 = rho2, rho3 = rho3, rhom2 = rhom2, rhom3 = rhom3,
                      r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3, r21 = r21, r22 = r22, g3 = g3, r23 = r23,
-                     p = p, n = n, J = J, K = K)
+                     n = n, J = J, K = K)
   ncpa <- esa/sea311
   ncpB <- esB/seB311
   ncp <- rbind(ncpa, ncpB)
@@ -512,8 +577,8 @@ power.med311 <- function(esa, esB, two.tailed = TRUE, alpha = .05,
                                  two.tailed = two.tailed, alpha = alpha,
                                  mc = mc, nsims = nsims, ndraws = ndraws,
                                  rhom2 = rhom2, rhom3 = rhom3, rho2 = rho2, rho3 = rho3,
-                                 r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3,
-                                 r21 = r21, r22 = r22, r23 = r23,
+                                 r2m1 = r2m1, r2m2 = r2m2, r2m3 = r2m3, gm3 = gm3,
+                                 r21 = r21, r22 = r22, r23 = r23, g3 = g3,
                                  p = p, n = n, J = J, K = K),
                     df = df,
                     ncp = ncp,

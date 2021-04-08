@@ -210,6 +210,40 @@ power.med211 <- function(esa, esb1, esB, escp, two.tailed = TRUE, alpha = .05,
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
 
+  # standard errors for 2-1-1 mediation
+  .se.a211 <- function(esa, rhom2, r2m1, r2m2, n, J, p) {
+    t2mbar <- rhom2 * (1 - r2m2 - (p * (1 - p)  * esa^2) / rhom2)
+    sig2mbar <- (1 - rhom2) * (1 - r2m1)
+    var.a211 <- (t2mbar + sig2mbar / n) / (J * p * (1 - p))
+    if(is.nan(var.a211) | var.a211 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.a211)))
+  }
+
+  .se.b1211 <- function(esb1, rho2, rhom2, r21, r2m1, n, J) {
+    sig2mbar <- (1 - rhom2) * (1 - r2m1)
+    sig2ybar <- (1 - rho2) * (1 - r21 - (((1 - rhom2) / (1 - rho2)) * esb1^2 * (1 - r2m1)))
+    var.b1211 <- sig2ybar / ((J * n - J) * sig2mbar)
+    if(is.nan(var.b1211) | var.b1211 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.b1211)))
+  }
+
+  .se.B211 <- function(esa, esB, esb1, escp, rho2, rhom2, r22, r21, r2m2, r2m1, n, J, p) {
+    t2mbar <- rhom2 * (1 - r2m2 - (p * (1 - p) * esa^2) / rhom2)
+    sig2mbar <- (1 - rhom2) * (1 - r2m1)
+    t2ybar <- rho2 * (1 - r22) - p * (1 - p) * (esa * esB + escp)^2 -
+      ((1 / (p * (1 - p))) * esB^2 * rhom2 * (1 - r2m2) +
+         (1 / (p * (1 - p))) * esB^2 * (1 - rhom2) * (1 - r2m1) / n - esa^2 * esB^2) / (1 / (p * (1 - p)))
+    sig2ybar <- (1 - rho2) * (1 - r21 - (((1 - rhom2) / (1 - rho2)) * esb1^2 * (1 - r2m1)))
+    var.B211 <- (t2ybar + sig2ybar / n) / (J * (t2mbar + sig2mbar / n))
+    if(is.nan(var.B211) | var.B211 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.B211)))
+  }
 
   dfa <- J - 4
   dfb1 <- n * J - 3
@@ -291,6 +325,24 @@ power.med221 <- function(esa, esb, escp, two.tailed = TRUE, alpha = .05,
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
+
+  # standard errors for 2-2-1 mediation
+  .se.a221 <- function(esa, r2m2, p, J) {
+    var.a221 <- (1-(r2m2 + p * (1 - p) * esa^2)) / (p * (1 - p) * J)
+    if(is.nan(var.a221) | var.a221 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    return(invisible(sqrt(var.a221)))
+  }
+
+  .se.b221 <- function(esa, esb, escp, rho2, r22, r21, r2m2, p, n, J) {
+    var.b221 <- (rho2 * (1 - (r22 + p * (1 - p) * (esa * esb + escp)^2 / rho2 + (esb^2 / rho2) * (1 - r2m2 - p * (1 - p) * esa^2))) +
+                   (1 - rho2) * (1 - r21) / n) / (J * (1 - (r2m2 + p * (1 - p) * esa^2)))
+    if(is.nan(var.b221) | var.b221 <= 0) {
+      stop("Design is not feasible", call. = FALSE)
+    }
+    sqrt(var.b221)
+  }
 
   dfa <- dfb <- J - 4
   df <- rbind(dfa, dfb)

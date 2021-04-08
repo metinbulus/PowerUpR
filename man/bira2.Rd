@@ -95,13 +95,16 @@ mrss.bira2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{omega2tm}{standardized effect variability of the moderation across sites (ratio of the moderated treatment effect variance between level 2 units to the total variance in the outcome.)}
   \item{p}{average proportion of level 1 units randomly assigned to treatment within level 2 units.}
   \item{q}{proportion of level 1 or level 2 units in the moderator subgroup.}
+  \item{g1}{number of covariates at level 1.}
   \item{g2}{number of covariates at level 2.}
   \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates (applies to all levels in partially nested designs).}
   \item{r2t2}{proportion of treatment effect variance among level 2 units explained by level 2 covariates.}
   \item{n}{harmonic mean of level 1 units across level 2 units (or simple average).}
   \item{J}{level 2 sample size.}
+  \item{ic_size}{sample size for each intervention cluster.}
   \item{J0}{starting value for \code{J}.}
   \item{tol}{tolerance to end iterative process for finding \code{J}.}
+  \item{z.test}{logical; \code{TRUE} for z-test.}
 }
 
 \value{
@@ -137,11 +140,11 @@ mrss.bira2_pn(es=.357, n=20, rho_ic=.10, ic_size=5)
 }
 
 \references{
-Cox, K., \& Kelcey, B. (2019). Optimal design of cluster-and multisite-randomized studies using fallible outcome measures. Evaluation Review, 43(3-4), 189-225. \url{https://doi.org/10.1177%2F0193841X19870878}
+Cox, K., \& Kelcey, B. (2019). Optimal design of cluster-and multisite-randomized studies using fallible outcome measures. Evaluation Review, 43(3-4), 189-225. \url{https://journals.sagepub.com/doi/10.1177/0193841X19870878}
 
-Dong, N., Kelcey, B., \& Spybrook, J. (2020). Design considerations in multisite randomized trials probing moderated treatment effects. \emph{Journal of Educational and Behavioral Statistics.} Advance online publication. \url{https://doi.org/10.3102%2F1076998620961492}
+Dong, N., Kelcey, B., \& Spybrook, J. (2020). Design considerations in multisite randomized trials probing moderated treatment effects. \emph{Journal of Educational and Behavioral Statistics.} Advance online publication. \url{https://journals.sagepub.com/doi/10.3102/1076998620961492}
 
-Dong, N., & Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
+Dong, N., \& Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
 
-Lohr, S., Schochet, P. Z., & Sanders, E. (2014). Partially nested randomized controlled trials in education research: A guide to design and analysis. NCER 2014-2000. National Center for Education Research. \url{https://ies.ed.gov/ncer/pubs/20142000/pdf/20142000.pdf}
+Lohr, S., Schochet, P. Z., \& Sanders, E. (2014). Partially nested randomized controlled trials in education research: A guide to design and analysis. NCER 2014-2000. National Center for Education Research. \url{https://ies.ed.gov/ncer/pubs/20142000/pdf/20142000.pdf}
 }

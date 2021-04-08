@@ -81,23 +81,23 @@ power.mod333(es=.25, alpha=.05, two.tailed=TRUE,
              rho2, rho3, g3=0, r21=0, r22=0, r23=0,
              p=.50, q=NULL, n, J, K)
 
-power.med331(esa, esB, two.tailed = TRUE, alpha = .05,
-             mc = FALSE, nsims = 1000, ndraws = 1000,
-             rho2, rho3, r2m3 = 0, r21 = 0, r22 = 0,
-             g3 = 0, r23 = 0, p = .50, n, J, K
+power.med331(esa, esB, two.tailed=TRUE, alpha=.05,
+             mc=FALSE, nsims=1000, ndraws=1000,
+             rho2, rho3, gm3=0, r2m3=0, r21=0, r22=0,
+             g3=0, r23=0, p=.50, n, J, K)
 
 power.med321(esa, esB, two.tailed=TRUE, alpha=.05,
              mc=FALSE, nsims=1000, ndraws=1000,
-             rhom3, rho2, rho3, r2m2 = 0,
-             r2m3 = 0, r21 = 0, r22 = 0, r23 = 0,
+             rhom3, rho2, rho3, r2m2=0,
+             r2m3=0, r21=0, r22=0, r23=0,
              p=.50, n, J, K)
 
-power.med311(esa, esB, two.tailed = TRUE, alpha = .05,
-             mc = FALSE, nsims = 1000, ndraws = 1000,
+power.med311(esa, esB, two.tailed=TRUE, alpha=.05,
+             mc=FALSE, nsims=1000, ndraws=1000,
              rhom2, rhom3, rho2, rho3,
-             r2m1 = 0, r2m2 = 0, r2m3 = 0,
-             r21 = 0, r22 = 0, g3 = 0, r23 = 0,
-             p = .50, n, J, K)
+             r2m1=0, r2m2=0, gm3=0, r2m3=0,
+             r21=0, r22=0, g3=0, r23=0,
+             p=.50, n, J, K)
 
 mrss.cra3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
           n, J, K0=10, tol=.10,
@@ -145,9 +145,11 @@ mrss.bcra4f3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{g1}{number of covariates at level 1.}
   \item{g2}{number of covariates at level 2.}
   \item{g3}{number of covariates at level 3.}
+  \item{gm3}{number of covariates at level 3 for the mediation model.}
   \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates.}
   \item{r22}{proportion of level 2 variance in the outcome explained by level 2 covariates.}
   \item{r23}{proportion of level 3 variance in the outcome explained by level 3 covariates.}
+  \item{r2m1}{proportion of mediator variance at level 1 explained by level 1 predictors.}
   \item{r2m2}{proportion of variance in the moderator effect that is explained by level 2 predictors. For the mediation model, proportion of variance in the mediator explained by level 2 predictors.}
   \item{r2m3}{proportion of variance in the moderator effect that is explained by level 3 predictors. For the mediation model, proportion of variance in the mediator explained by level 3 predictors.}
   \item{n}{harmonic mean of level 1 units across level 2 units (or simple average).}
@@ -249,14 +251,14 @@ mrss.bcra4f3(es=0.137, rho3=.15, rho2=.15,
 }
 
 \references{
-Spybrook, J., Kelcey, B., & Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://doi.org/10.3102%2F1076998616655442}
+Spybrook, J., Kelcey, B., \& Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://journals.sagepub.com/doi/10.3102/1076998616655442}
 
-Dong, N., Kelcey, B., & Spybrook, J. (2018). Power analyses for moderator effects in three-level cluster randomized trials. \emph{The Journal of Experimental Education}, \emph{86}(3), 489-514. \url{https://doi.org/10.1080/00220973.2017.1315714}
+Dong, N., Kelcey, B., \& Spybrook, J. (2018). Power analyses for moderator effects in three-level cluster randomized trials. \emph{The Journal of Experimental Education}, \emph{86}(3), 489-514. \url{https://doi.org/10.1080/00220973.2017.1315714}
 
-Dong, N., & Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
+Dong, N., \& Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
 
 Kelcey, B., Xie, Y., Spybrook, J., \& Dong, N. (2020). Power and Sample Size Determination for Multilevel Mediation in Three-Level Cluster-Randomized Trials. \emph{Multivariate Behavioral Research}, 1-18. \url{https://doi.org/10.1080/00273171.2020.1738910}
 
-Kelcey, B., Spybrook, J., Dong, N., & Bai, F. (2020). Cross-Level Mediation in School-Randomized Studies of Teacher Development: Experimental Design and Power.  \emph{Journal of Research on Educational Effectiveness}, 1-29.\url{https://doi.org/10.1080/19345747.2020.1726540}
+Kelcey, B., Spybrook, J., Dong, N., \& Bai, F. (2020). Cross-Level Mediation in School-Randomized Studies of Teacher Development: Experimental Design and Power.  \emph{Journal of Research on Educational Effectiveness}, 1-29.\url{https://doi.org/10.1080/19345747.2020.1726540}
 }
 

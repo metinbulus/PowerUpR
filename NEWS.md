@@ -4,7 +4,7 @@
 - added `mod211` and `mod212` functions (Dong, Kelcey, \& Spybrook, 2021)
 - added `power.med331()` and `power.med311()` functions (Kelcey, Xie, Spybrook, \& Dong, 2020)
 - added `power.rep()` and `mdh.rep()` functions (Hedges \& Schauer, 2019)
-- added partially nested designs (Lohr, Schochet, Sanders, 2014)
+- added partially nested designs (Kelcey, Bai, \& Xie, 2020; Lohr, Schochet, \& Sanders, 2014)
 
 ### Changes in PowerUpR v1.0.4
 - added 3-2-1 mediation

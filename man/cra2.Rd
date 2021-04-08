@@ -142,8 +142,10 @@ mrss.cra2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{n}{harmonic mean of level 1 units across level 2 units (or simple average).}
   \item{J}{level 2 sample size.}
   \item{K}{number of level 3 units (blocks).}
+  \item{ic_size}{sample size for each intervention cluster.}
   \item{J0}{starting value for \code{J}.}
   \item{tol}{tolerance to end iterative process for finding \code{J}.}
+  \item{z.test}{logical; \code{TRUE} for z-test.}
   \item{mc}{logical; \code{TRUE} for monte carlo simulation based power.}
   \item{nsims}{number of replications, if \code{mc = TRUE}.}
   \item{ndraws}{number of draws from the distribution of the path coefficients for each replication, if \code{mc = TRUE}.}
@@ -221,11 +223,11 @@ mrss.cra2_pn(es=.305, n=40, rho2_trt=.15, rho_ic=.10, ic_size=10)
 \references{
 Cox, K., \& Kelcey, B. (2019a). Optimal sample allocation in group-randomized mediation studies with a group-level mediator. \emph{The Journal of Experimental Education}, \emph{87}(4), 616-640. \url{https://doi.org/10.1080/00220973.2018.1496060}
 
-Cox, K., \& Kelcey, B. (2019b). Optimal design of cluster-and multisite-randomized studies using fallible outcome measures. Evaluation Review, 43(3-4), 189-225. \url{https://doi.org/10.1177%2F0193841X19870878}
+Cox, K., \& Kelcey, B. (2019b). Optimal design of cluster-and multisite-randomized studies using fallible outcome measures. Evaluation Review, 43(3-4), 189-225. \url{https://journals.sagepub.com/doi/10.1177/0193841X19870878}
 
 Dong, N., Spybrook J., Kelcey, B., \& Bulus, M.  (in press). Power analyses for moderator effects with (non)random slopes in cluster randomized trials. \emph{Methodology}.
 
-Kelcey, B., Dong, N., Spybrook, J., \& Cox, K. (2017). Statistical power for causally defined indirect effects in group-randomized trials with individual-level mediators. \emph{Journal of Educational and Behavioral Statistics}, \emph{42}(5), 499-530. \url{https://doi.org/10.3102%2F1076998617695506}
+Kelcey, B., Dong, N., Spybrook, J., \& Cox, K. (2017). Statistical power for causally defined indirect effects in group-randomized trials with individual-level mediators. \emph{Journal of Educational and Behavioral Statistics}, \emph{42}(5), 499-530. \url{https://journals.sagepub.com/doi/10.3102/1076998617695506}
 
 Kelcey, B., Dong, N., Spybrook, J., \& Shen, Z. (2017). Experimental power for indirect effects in group-randomized studies with group-level mediators. \emph{Multivariate behavioral research}, \emph{52}(6), 699-719. \url{https://doi.org/10.1080/00273171.2017.1356212}
 
@@ -233,7 +235,7 @@ Kelcey, B., \& Shen, Z. (2020). Strategies for efficient experimental design in 
 
 Kelcey, B., Spybrook, J., \& Dong, N. (2019). Sample size planning for cluster-randomized interventions probing multilevel mediation. \emph{Prevention Science}, \emph{20}(3), 407-418. \url{https://doi.org/10.1007/s11121-018-0921-6}
 
-Spybrook, J., Kelcey, B., \& Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://doi.org/10.3102%2F1076998616655442}
+Spybrook, J., Kelcey, B., \& Dong, N. (2016). Power for detecting treatment by moderator effects in two-and three-level cluster randomized trials. \emph{Journal of Educational and Behavioral Statistics}, \emph{41}(6), 605-627. \url{https://journals.sagepub.com/doi/10.3102/1076998616655442}
 
 Dong, N., \& Maynard, R. (2013). PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies. \emph{Journal of Research on Educational Effectiveness}, \emph{6}(1), 24-67. \url{https://doi.org/10.1080/19345747.2012.673143}
 

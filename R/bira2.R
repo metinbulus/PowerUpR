@@ -479,7 +479,7 @@ mdes.bira2_pn <- function(power=.80, alpha=.05, two.tailed=TRUE, df=NULL,
   class(mdes.out) <- c("main", "mdes")
   return(invisible(mdes.out))
 }
-# constructed data dxample 3.5.2 (Lohr, Schochet, Sanders, 2014, p. 69 - 72)
+# constructed data example 3.5.2 (Lohr, Schochet, Sanders, 2014, p. 69 - 72)
 # mdes.bira2_pn(rho2_trt=.15, omega2=.50, rho_ic=.10, n=20, J=15, ic_size=5, df=Inf)
 
 # r21 factored in both levels
