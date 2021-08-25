@@ -1,5 +1,5 @@
 mdes.bira2r1 <- function(power=.80, alpha=.05, two.tailed=TRUE,
-                        rel1=1, rho2,  omega2, g2=0, r21=0, r2t2=0,
+                        rel1=1, rho2, esv2=NULL, omega2=esv2/rho2, g2=0, r21=0, r2t2=0,
                         p=.50, n, J){
 
   user.parms <- as.list(match.call())
@@ -13,7 +13,7 @@ mdes.bira2r1 <- function(power=.80, alpha=.05, two.tailed=TRUE,
   .summ.mdes(effect = "main", power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed, mdes = mdes)
   mdes.out <- list(fun = "mdes.bira2r1",
                    parms = list(power=power, alpha=alpha, two.tailed=two.tailed,
-                                rel1=rel1, rho2=rho2, omega2=omega2,
+                                rel1=rel1, rho2=rho2, esv2=esv2, omega2=omega2,
                                 r21=r21, r2t2=r2t2, g2=g2,
                                 p=p, n=n, J=J),
                    df=df,
@@ -27,7 +27,7 @@ mdes.bira2r1 <- function(power=.80, alpha=.05, two.tailed=TRUE,
 mdes.bira2 <- mdes.bira2r1
 
 power.bira2r1 <- function(es=.25, alpha=.05, two.tailed=TRUE,
-                         rel1=1, rho2, omega2, g2=0, r21=0, r2t2=0,
+                         rel1=1, rho2, esv2=NULL, omega2=esv2/rho2, g2=0, r21=0, r2t2=0,
                          p=.50, n, J){
 
   user.parms <- as.list(match.call())
@@ -41,7 +41,7 @@ power.bira2r1 <- function(es=.25, alpha=.05, two.tailed=TRUE,
   .summ.power(power = power, alpha = alpha, sse = SSE, df = df, two.tailed = two.tailed, es = es)
   power.out <-  list(fun = "power.bira2r1",
                      parms = list(es=es, alpha=alpha, two.tailed=two.tailed,
-                                  rel1=rel1, rho2=rho2, omega2=omega2,
+                                  rel1=rel1, rho2=rho2, esv2=esv2, omega2=omega2,
                                   r21=r21, r2t2=r2t2, g2=g2,
                                   p=p, n=n, J=J),
                      df=df,
@@ -55,7 +55,7 @@ power.bira2r1 <- function(es=.25, alpha=.05, two.tailed=TRUE,
 power.bira2 <- power.bira2r1
 
 mrss.bira2r1 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
-                         rel1=1, rho2, omega2, r21=0, r2t2=0,
+                         rel1=1, rho2, esv2=NULL, omega2=esv2/rho2, r21=0, r2t2=0,
                          J0=10, tol=.10, g2=0, p=.50, n){
 
   user.parms <- as.list(match.call())
@@ -79,7 +79,7 @@ mrss.bira2r1 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
 
   mrss.out <-  list(fun = "mrss.bira2r1",
                     parms = list(es=es, power=power, alpha=alpha, two.tailed=two.tailed,
-                                 rel1=rel1, rho2=rho2, omega2=omega2, J0=J0, tol=tol,
+                                 rel1=rel1, rho2=rho2, esv2=esv2, omega2=omega2, J0=J0, tol=tol,
                                  p=p, n=n, r21=r21, r2t2=r2t2, g2=g2),
                     df=df,
                     ncp = M,
@@ -460,8 +460,17 @@ mdes.bira2_pn <- function(power=.80, alpha=.05, two.tailed=TRUE, df=NULL,
     warning("'rho_ic = 0'?", call. = FALSE)
   }
 
-  # needs Satterthwaite (1946) degrees of freedom
-  if(is.null(df)) df <- J - g2 - 1
+  # if(is.null(df)) df <- J - g2 - 1
+  # Satterthwaite (1946) approximation
+  # assuming equal level 1 variance for treatment and control groups
+  if(is.null(df)) {
+   q <- 1 - p
+   it <- n / ic_size
+   xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+   xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+   df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J*q - 1)) + xt^2 / (p^2 *(J*p - 1)))
+  }
+
 
   deff_rand_ic <- 1 + ((rho2_trt * omega2 * n * p * (1 - p) - rho2_trt) + rho_ic * (1 - p) * (ic_size - 1)) / (1 - p * rho_ic)
   SSE <- sqrt(((1 - r21) / (J * n * p * (1 - p))) * ((1 - p * rho_ic) / (1 - rho_ic)) * deff_rand_ic )
@@ -497,8 +506,15 @@ power.bira2_pn <- function(es=.25,alpha=.05, two.tailed=TRUE, df=NULL,
     warning("'rho_ic = 0'?", call. = FALSE)
   }
 
-  # needs Satterthwaite (1946) degrees of freedom
-  if(is.null(df)) df <- J - g2 - 1
+  # if(is.null(df)) df <- J - g2 - 1
+  # Satterthwaite (1946) degrees of freedom
+  if(is.null(df)) {
+    q <- 1 - p
+    it <- n / ic_size
+    xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+    xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+    df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J*q - 1)) + xt^2 / (p^2 *(J*p - 1)))
+  }
 
   deff_rand_ic <- 1 + ((rho2_trt * omega2 * n * p * (1 - p) - rho2_trt) + rho_ic * (1 - p) * (ic_size - 1)) / (1 - p * rho_ic)
   SSE <- sqrt(((1 - r21) / (J * n * p * (1 - p))) * ((1 - p * rho_ic) / (1 - rho_ic)) * deff_rand_ic )
@@ -537,8 +553,13 @@ mrss.bira2_pn  <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE, z.test
   conv <- FALSE
   while(i<=100 & conv==FALSE){
 
-    # needs Satterthwaite (1946) degrees of freedom
-    df <- J0 - g2 - 1
+    # if(is.null(df)) df <- J0 - g2 - 1
+    # Satterthwaite (1946) degrees of freedom
+    q <- 1 - p
+    it <- n / ic_size
+    xt <- rho2_trt + rho_ic / it + (1 - rho2_trt - rho_ic) / (it * ic_size)
+    xc <- rho2_trt + (1 - rho2_trt - rho_ic) / n # n -> nc
+    df <- (xc/q + xt/p)^2 / (xc^2 / (q^2 * (J0*q - 1)) + xt^2 / (p^2 *(J0*p - 1)))
 
     if(df <= 0) stop("Increase 'J0'", call. = FALSE)
     if(df <= 0 | is.infinite(df)){break}

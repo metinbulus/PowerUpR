@@ -1,9 +1,13 @@
 # minimum detectable effect size
 .mdes.fun <- function(power, alpha, sse, df, two.tailed){
+  if(length(sse) == 0) {
+    stop("Check minimum required arguments with no defaults", call. = FALSE)
+  }
   if(length(sse) > 1 || !is.numeric(sse) || sse < 0 ||
      length(df) > 1 || !is.numeric(df) || df < 1) {
     stop("Design is not feasible", call. = FALSE)
   }
+
   t1 <- ifelse(two.tailed == TRUE, abs(qt(alpha / 2, df)), abs(qt(alpha, df)))
   t2 <- abs(qt(power, df))
   m <- ifelse(power >= 0.5, t1 + t2, t1 - t2)
@@ -18,6 +22,9 @@
 
 # statistical power
 .power.fun <- function(es, alpha, sse, df, two.tailed){
+  if(length(sse) == 0) {
+    stop("Check minimum required arguments with no defaults", call. = FALSE)
+  }
   if(length(sse) > 1 || !is.numeric(sse) || sse < 0 ||
      length(df) > 1 || !is.numeric(df) || df < 1) {
     stop("Design is not feasible", call. = FALSE)

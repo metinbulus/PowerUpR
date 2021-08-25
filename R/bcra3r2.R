@@ -1,5 +1,6 @@
 mdes.bcra3r2 <- function(power=.80, alpha=.05, two.tailed=TRUE,
-                        rho2, rho3, omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0,
+                        rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+                        p=.50, g3=0, r21=0, r22=0, r2t3=0,
                         n, J, K){
 
   user.parms <- as.list(match.call())
@@ -15,7 +16,7 @@ mdes.bcra3r2 <- function(power=.80, alpha=.05, two.tailed=TRUE,
   mdes.out <- list(fun = "mdes.bcra3r2",
                    parms = list(power=power, alpha=alpha, two.tailed=two.tailed,
                                 rho2=rho2, rho3=rho3,
-                                omega3=omega3,
+                                esv3=esv3, omega3=omega3,
                                 p=p, r21=r21, r22=r22, r2t3=r2t3, g3=g3,
                                 n=n, J=J, K=K),
                    df=df,
@@ -28,7 +29,8 @@ mdes.bcra3r2 <- function(power=.80, alpha=.05, two.tailed=TRUE,
 # mdes.bcra3r2(rho3=.13, rho2=.10, omega3=.4, n=10, J=6, K=24)
 
 power.bcra3r2 <- function(es=.25, alpha=.05, two.tailed=TRUE,
-                         rho2, rho3,  omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0,
+                         rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+                         p=.50, g3=0, r21=0, r22=0, r2t3=0,
                          n, J, K){
 
   user.parms <- as.list(match.call())
@@ -44,7 +46,7 @@ power.bcra3r2 <- function(es=.25, alpha=.05, two.tailed=TRUE,
   power.out <-  list(fun = "power.bcra3r2",
                      parms = list(es=es, alpha=alpha, two.tailed=two.tailed,
                                   rho2=rho2, rho3=rho3,
-                                  omega3=omega3,
+                                  esv3=esv3, omega3=omega3,
                                   p=p, r21=r21, r22=r22, r2t3=r2t3, g3=g3,
                                   df=df,
                                   n=n, J=J, K=K),
@@ -59,7 +61,8 @@ power.bcra3r2 <- function(es=.25, alpha=.05, two.tailed=TRUE,
 
 mrss.bcra3r2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
                          n, J, K0=10, tol=.10,
-                         rho2, rho3,  omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0){
+                         rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+                         p=.50, g3=0, r21=0, r22=0, r2t3=0){
 
   user.parms <- as.list(match.call())
   .error.handler(user.parms)
@@ -84,7 +87,7 @@ mrss.bcra3r2 <- function(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
                     parms = list(es=es, power=power, alpha=alpha, two.tailed=two.tailed,
                                  n=n, J=J, K0=K0, tol=tol,
                                  rho2=rho2, rho3=rho3,
-                                 omega3=omega3,
+                                 esv3=esv3, omega3=omega3,
                                  p=p, r21=r21, r22=r22, r2t3=r2t3, g3=g3),
                     df=df,
                     ncp = M,
