@@ -32,16 +32,16 @@ For partially nested blocked individual-level random assignment designs (blocked
 
 \usage{
 mdes.bira2(power=.80, alpha=.05, two.tailed=TRUE,
-           rel1=1, rho2, omega2, g2=0, r21=0, r2t2=0,
-           p=.50, n, J)
+           rel1=1, rho2, esv2=NULL, omega2=esv2/rho2,
+           g2=0, r21=0, r2t2=0, p=.50, n, J)
 
 power.bira2(es=.25, alpha=.05, two.tailed=TRUE,
-            rel1=1, rho2, omega2, g2=0, r21=0, r2t2=0,
-            p=.50, n, J)
+            rel1=1, rho2, esv2=NULL, omega2=esv2/rho2,
+            g2=0, r21=0, r2t2=0, p=.50, n, J)
 
 mrss.bira2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
-           rel1=1, rho2, omega2, r21=0, r2t2=0,
-           J0=10, tol=.10, g2=0, p=.50, n)
+           rel1=1, rho2, esv2=NULL, omega2=esv2/rho2,
+           r21=0, r2t2=0, J0=10, tol=.10, g2=0, p=.50, n)
 
 power.mod211(es=.25, alpha=.05, two.tailed=TRUE,
              rho2, omega2tm, r21=0,
@@ -88,19 +88,20 @@ mrss.bira2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{df}{degrees of freedom.}
   \item{rho_ic}{proportion of variance in the outcome (for treatment group) that is between intervention clusters.}
   \item{rho2_trt}{proportion of variance in the outcome (for treatment group) that is between level 2 units.}
-  \item{rel1}{level 1 outcome reliability coefficient (Cox \& Kelcey, 2019).}
-  \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2).}
-  \item{omega2}{treatment effect heterogeneity as the ratio of the treatment effect variance between level 2 units to the residual variance at level 2.}
+  \item{rel1}{level 1 outcome reliability coefficient (see Cox \& Kelcey, 2019, p. 23).}
+  \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2). \code{rho} also works.}
+  \item{esv2}{effect size variability as the ratio of the treatment effect variance between level 2 units to the total variance in the outcome (level 1 + level 2). \code{esv} also works. Ignored when \code{omega2} is specified.}
+  \item{omega2}{treatment effect heterogeneity as the ratio of the treatment effect variance between level 2 units to the unconditional level 2 residual variance. \code{omega} also works.}
   \item{omega2t}{standardized treatment effect variability across sites in the model that is not conditional on Level 2 moderator (ratio of the treatment effect variance between level 2 units to the total variance in the outcome.)}
   \item{omega2tm}{standardized effect variability of the moderation across sites (ratio of the moderated treatment effect variance between level 2 units to the total variance in the outcome.)}
   \item{p}{average proportion of level 1 units randomly assigned to treatment within level 2 units.}
-  \item{q}{proportion of level 1 or level 2 units in the moderator subgroup.}
+  \item{q}{proportion of level 1 (on average) or level 2 units in the moderator subgroup.}
   \item{g1}{number of covariates at level 1.}
   \item{g2}{number of covariates at level 2.}
   \item{r21}{proportion of level 1 variance in the outcome explained by level 1 covariates (applies to all levels in partially nested designs).}
   \item{r2t2}{proportion of treatment effect variance among level 2 units explained by level 2 covariates.}
-  \item{n}{harmonic mean of level 1 units across level 2 units (or simple average).}
-  \item{J}{level 2 sample size.}
+  \item{n}{level 1 sample size per block (average or harmonic mean).}
+  \item{J}{number of blocks.}
   \item{ic_size}{sample size for each intervention cluster.}
   \item{J0}{starting value for \code{J}.}
   \item{tol}{tolerance to end iterative process for finding \code{J}.}

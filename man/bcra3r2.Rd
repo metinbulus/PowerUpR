@@ -17,16 +17,19 @@ For partially nested blocked cluster randomized trials (interventions clusters i
 
 \usage{
 mdes.bcra3r2(power=.80, alpha=.05, two.tailed=TRUE,
-             rho2, rho3, omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0,
+             rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+             p=.50, g3=0, r21=0, r22=0, r2t3=0,
              n, J, K)
 
 power.bcra3r2(es=.25, alpha=.05, two.tailed=TRUE,
-              rho2, rho3,  omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0,
+              rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+              p=.50, g3=0, r21=0, r22=0, r2t3=0,
               n, J, K)
 
 mrss.bcra3r2(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
              n, J, K0=10, tol=.10,
-             rho2, rho3,  omega3, p=.50, g3=0, r21=0, r22=0, r2t3=0)
+             rho2, rho3, esv3=NULL, omega3=esv3/rho3,
+             p=.50, g3=0, r21=0, r22=0, r2t3=0)
 
 mdes.bcra3r2_pn(power=.80, alpha=.05, two.tailed=TRUE, df=NULL,
                 rho3_trt=.10, omega3=.50, rho2_trt=.20, rho_ic=0,
@@ -52,6 +55,7 @@ mrss.bcra3r2_pn(es=.25, power=.80, alpha=.05, two.tailed=TRUE, z.test=FALSE,
   \item{rho3_trt}{proportion of variance in the outcome (for treatment group) that is between level 3 units.}
   \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2).}
   \item{rho3}{proportion of variance in the outcome between level 3 units (unconditional ICC3).}
+  \item{esv3}{effect size variability as the ratio of the treatment effect variance between level 3 units to the total variance in the outcome (level 1 + level 2 + level 3). \code{esv} also works. Ignored when \code{omega3} is specified.}
   \item{omega3}{treatment effect heterogeneity as ratio of treatment effect variance among level 3 units to the residual variance at level 3.}
   \item{p}{average proportion of level 2 units randomly assigned to treatment within level 3 units.}
   \item{g3}{number of covariates at level 3.}

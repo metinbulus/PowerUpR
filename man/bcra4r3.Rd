@@ -11,18 +11,18 @@ For four-level cluster-randomized block designs (treatment at level 3, with rand
 
 \usage{
 mdes.bcra4r3(power=.80, alpha=.05, two.tailed=TRUE,
-             rho2, rho3, rho4, omega4,
+             rho2, rho3, rho4, esv4=NULL, omega4=esv4/rho4,
              p=.50, r21=0, r22=0, r23=0, r2t4=0, g4=0,
              n, J, K, L)
 
 power.bcra4r3(es=.25, alpha=.05, two.tailed=TRUE,
-              rho2, rho3, rho4, omega4,
+              rho2, rho3, rho4, esv4=NULL, omega4=esv4/rho4,
               p=.50, r21=0, r22=0, r23=0, r2t4=0, g4=0,
               n, J, K, L)
 
 mrss.bcra4r3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
              n, J, K, L0=10, tol=.10,
-             rho2, rho3, rho4, omega4,
+             rho2, rho3, rho4, esv4=NULL, omega4=esv4/rho4,
              p=.50, r21=0, r22=0, r23=0, r2t4=0, g4=0)
 }
 
@@ -34,6 +34,7 @@ mrss.bcra4r3(es=.25, power=.80, alpha=.05, two.tailed=TRUE,
   \item{rho2}{proportion of variance in the outcome between level 2 units (unconditional ICC2).}
   \item{rho3}{proportion of variance in the outcome between level 3 units (unconditional ICC3).}
   \item{rho4}{proportion of variance in the outcome between level 4 units (unconditional ICC4).}
+  \item{esv4}{effect size variability as the ratio of the treatment effect variance between level 4 units to the total variance in the outcome (level 1 + level 2 + level 3 + level 4). \code{esv} also works. Ignored when \code{omega4} is specified.}
   \item{omega4}{treatment effect heterogeneity as ratio of treatment effect variance among level 4 units to the residual variance at level 4.}
   \item{p}{average proportion of level 3 units randomly assigned to treatment within level 4 units.}
   \item{g4}{number of covariates at level 4.}
